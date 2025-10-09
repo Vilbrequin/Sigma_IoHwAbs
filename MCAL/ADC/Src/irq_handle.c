@@ -21,7 +21,7 @@ void nvic_disable_irq(IRQn_Type irqn)
     if ((int32_t)irqn < 0) return;
     NVIC->ICER[(uint32_t)irqn >> 5u] = (uint32_t)1u << ((uint32_t)irqn & 31u);
     /* Clear any pending */
-    NVIC->ICPR[(uint32_t)irqn >> 5u] = (uint32_t)1u << ((uint32_t)irqn & 31u);
+//    NVIC->ICPR[(uint32_t)irqn >> 5u] = (uint32_t)1u << ((uint32_t)irqn & 31u);
 }
 
 void nvic_set_priority(IRQn_Type irqn, uint32_t prio)

@@ -61,11 +61,18 @@ static boolean 				ADC_Initialized  = FALSE;
 /*********************************************************************************************************************/
 static inline void Adc_TimerEnableClock(ADC_InstanceType InstanceId);
 static void Adc_DMAConfig(Adc_GroupType Group);
-static inline void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id);
-static inline void grp_single_oneshot(Adc_GroupStateType* grp);
+/*static void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id);*/
+
+static void adc_dma_ht_handler(Adc_GroupStateType* grp);
+static void adc_dma_tc_handler(Adc_GroupStateType* grp);
+static void adc_dma_irq_mux(ADC_InstanceType Adc_id);
+
+static void enable_all_irqs();
+static void disable_all_irqs();
+/*static inline void grp_single_oneshot(Adc_GroupStateType* grp);
 static inline void grp_single_continuous(Adc_GroupStateType* grp);
 static inline void grp_streaming_circular(Adc_GroupStateType* grp);
-static inline void grp_streaming_linear(Adc_GroupStateType* grp);
+static inline void grp_streaming_linear(Adc_GroupStateType* grp);*/
 
 /*********************************************************************************************************************/
 /*													Public APIs														 */
@@ -101,7 +108,6 @@ void Adc_Init(const Adc_ConfigType* ConfigPtr){
 		hadc->Init.ContinuousConvMode = DISABLE;
 		hadc->Init.DiscontinuousConvMode = DISABLE;
 		hadc->Init.EOCSelection = ADC_EOC_SEQ_CONV;
-		hadc->Init.DMAContinuousRequests = DISABLE;
 
 
 		Adc_module.moduleUnits[i].unitCfg = hwUnit;
@@ -146,11 +152,12 @@ void Adc_Init(const Adc_ConfigType* ConfigPtr){
 	__HAL_RCC_DMA2_CLK_ENABLE();
 
 	/* Set priorities */
-	nvic_set_priority(ADC_IRQn,          0);  // ADC shared IRQ
+	nvic_set_priority(DMA2_Stream0_IRQn,          0);  // ADC shared IRQ
+	nvic_set_priority(DMA2_Stream1_IRQn,          1);  // ADC shared IRQ
+	nvic_set_priority(DMA2_Stream3_IRQn,          2);  // ADC shared IRQ
 
 	/*  Enable lines */
-	nvic_enable_irq(ADC_IRQn);
-
+	enable_all_irqs();
 	/* Global enable */
 	cpu_irq_enable();
 
@@ -237,29 +244,40 @@ void Adc_StartGroupConversion (Adc_GroupType Group){
 
 	hadc->Init.ScanConvMode = grp->NumChannels > 1 ? ENABLE : DISABLE;
 	hadc->Init.ContinuousConvMode = continuous ? ENABLE : DISABLE;
+	hadc->Init.DMAContinuousRequests = ENABLE; // !!!!
 	hadc->Init.ExternalTrigConv = isSwTrigger ? ADC_SOFTWARE_START : ADC_EXTERNALTRIGCONV_T1_CC1; // in case of a HW trigger we must set the right one, but as a v1.0.0 we stub it to a default value1
 	hadc->Init.NbrOfConversion = isStreamingAndLinear ? grp->NumChannels * grp->NumSample : grp->NumChannels;
+	hadc->Init.EOCSelection = ADC_EOC_SEQ_CONV;
+	HAL_ADC_Init(hadc);
+	//__HAL_ADC_ENABLE_IT(hadc, ADC_IT_EOC);
 
 	if(TRUE == isStreamingAndLinear){
-		for (uint8_t i = 0; i < grp->NumSample; i++){
-			for(uint8_t i = 0; i < grp->NumChannels; i++){
+		/*for (uint8_t i = 0; i < grp->NumSample; i++){*/
+			for(uint8_t j = 0; j < grp->NumChannels; j++){
+			  sConfig.Channel = grp->ChannelList[j].ChannelId;
+			  sConfig.Rank = grp->ChannelList[j].Rank;
+			  sConfig.SamplingTime = grp->ChannelList[j].SampleTime;
+			  if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
+				 {
+					return;
+				 }
+			}
+		/*}*/
+	}
+	else {
+		for(uint8_t i = 0; i < grp->NumChannels; i++){
 			  sConfig.Channel = grp->ChannelList[i].ChannelId;
 			  sConfig.Rank = grp->ChannelList[i].Rank;
 			  sConfig.SamplingTime = grp->ChannelList[i].SampleTime;
-		}
+
+			  if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
+			 {
+				return;
+			 }
+
 		}
 	}
 
-	for(uint8_t i = 0; i < grp->NumChannels; i++){
-		  sConfig.Channel = grp->ChannelList[i].ChannelId;
-		  sConfig.Rank = grp->ChannelList[i].Rank;
-		  sConfig.SamplingTime = grp->ChannelList[i].SampleTime;
-	}
-
-	if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
-	 {
-		return;
-	 }
 
 	Adc_DMAConfig(Group);
 
@@ -275,7 +293,6 @@ void Adc_StartGroupConversion (Adc_GroupType Group){
 	unitState->unitActiveGroup = grpState;
 
 	HAL_ADC_Start_DMA(hadc, (uint32_t *)grpState->grpBuff, buff_size);
-
 }
 
 
@@ -284,7 +301,7 @@ Std_ReturnType Adc_ReadGroup (Adc_GroupType Group, Adc_ValueGroupType* DataBuffe
 	if(NULL == DataBufferPtr){
 		return E_NOT_OK;
 	}
-	if (Group >= Adc_module.moduleCfg->NumGroups){
+	if (Group > Adc_module.moduleCfg->NumGroups){
 				return E_NOT_OK; // No DET Yet !
 	}
 	Adc_GroupStateType* 		grpState = &Adc_module.moduleGroups[Group];
@@ -307,13 +324,13 @@ Std_ReturnType Adc_ReadGroup (Adc_GroupType Group, Adc_ValueGroupType* DataBuffe
 	 ******************************************************************************************************************************/
 
 	/* Critical Section that get updated Via ISR so to read all the three members in atomic way we must disable IRQ then Read them then Enable it back*/
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 	Adc_StatusType state = grpState->grpState;
 
 	uint16_t start_idx = grpState->grpLastValidIdx;
 
 	boolean isReady = grpState->firstRoundReady;
-	nvic_enable_irq(ADC_IRQn);
+	enable_all_irqs();
 	/**************************************************************************************************************************************************/
 	boolean isContinuous = ( (ADC_ACCESS_MODE_SINGLE == grpCfg->AccessMode) && (ADC_CONV_MODE_CONTINUOUS == grpCfg->ConversionMode) )
 						   ||
@@ -357,9 +374,9 @@ Std_ReturnType Adc_ReadGroup (Adc_GroupType Group, Adc_ValueGroupType* DataBuffe
 	}
 
 	// Critical section 2 : write the state !!! Same Safety mechanism should be applied
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 	grpState->grpState = newState;
-	nvic_enable_irq(ADC_IRQn);
+	enable_all_irqs();
 	return E_OK;
 }
 
@@ -371,11 +388,11 @@ Adc_StatusType Adc_GetGroupStatus (Adc_GroupType Group) {
 
 	Adc_GroupStateType* 		grpState = &Adc_module.moduleGroups[Group];
 
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 
 	Adc_StatusType state = grpState->grpState;
 
-	nvic_enable_irq(ADC_IRQn);
+	enable_all_irqs();
 
 	return state;
 }
@@ -417,13 +434,12 @@ void Adc_StopGroupConversion (Adc_GroupType Group){
 	HAL_ADC_Stop_DMA(hadc);
 
 	/*Critical Section */
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 	grpState->grpState = ADC_IDLE;
 	grpState->grpLastValidIdx = 0;
 	grpState->firstRoundReady = FALSE;
 	grpState->isStarted = FALSE;
-	nvic_enable_irq(ADC_IRQn);
-
+	enable_all_irqs();
 }
 
 
@@ -442,7 +458,7 @@ Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group, Adc_Value
 		return;
 	}
 
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 
 	Adc_StatusType state = grpState->grpState;
 
@@ -452,7 +468,7 @@ Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group, Adc_Value
 
 	Adc_StreamNumSampleType numValidSmple = grpState->validSalmples;
 
-	nvic_enable_irq(ADC_IRQn);
+	enable_all_irqs();
 
 	Adc_StreamNumSampleType retrunValue = 0;
 
@@ -525,11 +541,11 @@ Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group, Adc_Value
 		// Do Nothing !!1
 	}
 
-	nvic_disable_irq(ADC_IRQn);
+	disable_all_irqs();
 
 	grpState->grpState = newState;
 
-	nvic_enable_irq(ADC_IRQn);
+	enable_all_irqs();
 
 	return retrunValue;
 }
@@ -575,7 +591,10 @@ static void Adc_DMAConfig(Adc_GroupType Group){
 						   ||
 						   ( (ADC_ACCESS_MODE_STREAMING == grp->AccessMode) && (ADC_STREAM_BUFFER_CIRCULAR == grp->BufferMode) );
 
-	HAL_DMA_DeInit(hdma); // DMA stream must be fully disabled and reset before change DMA core parameters !
+	boolean isSingleOneShot = ( (ADC_ACCESS_MODE_SINGLE == grp->AccessMode) && (ADC_CONV_MODE_ONESHOT == grp->ConversionMode) );
+
+	//HAL_DMA_DeInit(hdma); // DMA stream must be fully disabled and reset before change DMA core parameters !
+	__HAL_DMA_DISABLE(hdma);
 
 	hdma->Instance = ADC_MapDMAStream[grp->InstanceId];
 	hdma->Init.Channel = ADC_MapDMAChannels[grp->InstanceId];
@@ -588,11 +607,17 @@ static void Adc_DMAConfig(Adc_GroupType Group){
 	hdma->Init.Priority = DMA_PRIORITY_LOW;
 	hdma->Init.FIFOMode = DMA_FIFOMODE_DISABLE;
 
-
     if (HAL_DMA_Init(hdma) != HAL_OK)
     {
     	return; // No DET Yet !
     }
+
+    if (!isSingleOneShot){
+
+    	__HAL_DMA_ENABLE_IT(hdma, DMA_IT_HT);   // Half-transfer interrupt
+    }
+
+    __HAL_DMA_ENABLE_IT(hdma, DMA_IT_TC);   // Transfer-complete interrupt
 
     __HAL_LINKDMA(hadc,DMA_Handle,*hdma);
 }
@@ -600,19 +625,33 @@ static void Adc_DMAConfig(Adc_GroupType Group){
 /*********************************************************************************************************************/
 /*												IRQ Handler (ISR)													 */
 /*********************************************************************************************************************/
-void ADC_IRQHandler(void){
+/*void ADC_IRQHandler(void){
 	adc_unit_handler(ADC1, ADC_1);
 	adc_unit_handler(ADC2, ADC_2);
 	adc_unit_handler(ADC3, ADC_3);
+}*/
+
+// ADC 1 DMA 2 Stream IRQ Handler
+void DMA2_Stream0_IRQHandler(void){
+	adc_dma_irq_mux(ADC_1);
 }
 
+// ADC 3 DMA 2 Stream IRQ Handler
+void DMA2_Stream1_IRQHandler(void){
+	adc_dma_irq_mux(ADC_3);
+}
+
+// ADC 2 DMA 2 Stream IRQ Handler
+void DMA2_Stream3_IRQHandler(void){
+	adc_dma_irq_mux(ADC_2);
+}
 /*********************************************************************************************************************/
 /*												ISRs Helpers													 	 */
 /*********************************************************************************************************************/
-static inline void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id){
+/*static void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id){
 	if((adc->SR & ADC_SR_EOC) && (adc->CR1 & ADC_CR1_EOCIE)){
-		/* Clear EOC by the following sequence
-		 * Read SR then Read DR*/
+		 Clear EOC by the following sequence
+		 * Read SR then Read DR
 		(void)adc->SR;
 		(void)adc->DR;
 
@@ -632,10 +671,10 @@ static inline void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id){
 
 		if (ADC_ACCESS_MODE_SINGLE == cfg->AccessMode){
 			if (ADC_CONV_MODE_ONESHOT == cfg->ConversionMode){
-
+				grp_single_oneshot(activgrp);
 			}
 			else if (ADC_CONV_MODE_CONTINUOUS == cfg->ConversionMode) {
-
+				grp_single_continuous(activgrp);
 			}
 			else {
 				// Do Nothing
@@ -643,10 +682,10 @@ static inline void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id){
 		}
 		else if(ADC_ACCESS_MODE_STREAMING == cfg->AccessMode){
 			if (ADC_STREAM_BUFFER_CIRCULAR == cfg->BufferMode){
-
+				grp_streaming_circular(activgrp);
 			}
 			else if (ADC_STREAM_BUFFER_LINEAR == cfg->BufferMode) {
-
+				grp_streaming_linear(activgrp);
 			}
 			else {
 				// Do Nothing
@@ -724,13 +763,87 @@ static inline void grp_streaming_linear(Adc_GroupStateType* grp){
 
 	}
 	else {
-		/* Do nothing, we should not enter to this else because after filling the buffer we should stop ADC conversions, but as safety case handling
-		 * in case we don't stop the ADC immediately after filling the buffer we do not change anything - we do not change the state of the buffer ! */
+		 Do nothing, we should not enter to this else because after filling the buffer we should stop ADC conversions, but as safety case handling
+		 * in case we don't stop the ADC immediately after filling the buffer we do not change anything - we do not change the state of the buffer !
+	}
+
+}*/
+
+static void adc_dma_irq_mux(ADC_InstanceType Adc_id){
+	Adc_UnitStateType* unit = hwToUnits[Adc_id];
+	if (NULL == unit) {
+		return;
+	}
+
+	Adc_GroupStateType* activgrp = unit->unitActiveGroup;
+	if (NULL == activgrp) {
+		return;
+	}
+
+	DMA_HandleTypeDef* hdma = unit->unitDMAHandle;
+	if (NULL == hdma) {
+		return;
+	}
+
+	uint32_t ht_flag = (Adc_id == ADC_1) ? DMA_FLAG_HTIF0_4 : (Adc_id == ADC_2) ? DMA_FLAG_HTIF3_7 :  DMA_FLAG_HTIF1_5;
+	if(__HAL_DMA_GET_FLAG(hdma, ht_flag)){
+		__HAL_DMA_CLEAR_FLAG(hdma, ht_flag);
+		adc_dma_ht_handler(activgrp);
+	}
+
+	uint32_t tc_flag = (Adc_id == ADC_1) ? DMA_FLAG_TCIF0_4 : (Adc_id == ADC_2) ? DMA_FLAG_TCIF3_7 :  DMA_FLAG_TCIF1_5;
+	if(__HAL_DMA_GET_FLAG(hdma, tc_flag)){
+		__HAL_DMA_CLEAR_FLAG(hdma, tc_flag);
+		adc_dma_tc_handler(activgrp);
 	}
 
 }
+static void adc_dma_ht_handler(Adc_GroupStateType* grp){
+	const Adc_GroupCfgType* grpCfg = grp->grpCfg;
+	if (grpCfg == NULL) {
+		return;
+	}
+
+	boolean isSingle = ((ADC_ACCESS_MODE_SINGLE == grpCfg->AccessMode) && (ADC_CONV_MODE_CONTINUOUS == grpCfg->ConversionMode));
+
+	uint8_t nChannels =  grpCfg->NumChannels;
+	Adc_StreamNumSampleType nSamples =  isSingle ? 2 : grpCfg->NumSample;
+	uint16_t BufferSize = nChannels * nSamples;
 
 
+	grp->firstRoundReady = 1;
+	grp->grpLastValidIdx = ((BufferSize % 2) == 0) ? ((BufferSize/2) - 1) * nChannels : (((BufferSize - 1)/2) - 1) * nChannels;
+	grp->grpState = ADC_COMPLETED;
+	grp->validSalmples = ((BufferSize % 2) == 0) ? ((BufferSize/2) - 1) : (((BufferSize - 1)/2) - 1);
+}
+
+static void adc_dma_tc_handler(Adc_GroupStateType* grp){
+	const Adc_GroupCfgType* grpCfg = grp->grpCfg;
+	if (grpCfg == NULL) {
+		return;
+	}
+	boolean isSingle = ((ADC_ACCESS_MODE_SINGLE == grpCfg->AccessMode) && (ADC_CONV_MODE_CONTINUOUS == grpCfg->ConversionMode));
+
+	uint8_t nChannels =  grpCfg->NumChannels;
+	Adc_StreamNumSampleType nSamples =  isSingle ? 2 : grpCfg->NumSample;
+	uint16_t BufferSize = nChannels * nSamples;
+
+	boolean isLinearStreaming = ( (ADC_ACCESS_MODE_STREAMING == grpCfg->AccessMode) && (ADC_STREAM_BUFFER_LINEAR == grpCfg->BufferMode) );
+
+	grp->grpLastValidIdx = BufferSize - nChannels;
+	grp->grpState = isLinearStreaming ? ADC_STREAM_COMPLETED : ADC_COMPLETED;
+	grp->validSalmples = nSamples - 1;
+}
 
 
+static void enable_all_irqs(void){
+	nvic_enable_irq(DMA2_Stream0_IRQn);
+	nvic_enable_irq(DMA2_Stream1_IRQn);
+	nvic_enable_irq(DMA2_Stream3_IRQn);
+}
 
+static void disable_all_irqs(void){
+	nvic_disable_irq(DMA2_Stream0_IRQn);
+	nvic_disable_irq(DMA2_Stream1_IRQn);
+	nvic_disable_irq(DMA2_Stream3_IRQn);
+}
