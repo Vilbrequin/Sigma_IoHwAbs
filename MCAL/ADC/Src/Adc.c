@@ -61,19 +61,11 @@ static boolean 				ADC_Initialized  = FALSE;
 /*********************************************************************************************************************/
 static inline void Adc_TimerEnableClock(ADC_InstanceType InstanceId);
 static void Adc_DMAConfig(Adc_GroupType Group);
-/*static void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id);*/
-
 static void adc_dma_ht_handler(Adc_GroupStateType* grp);
 static void adc_dma_tc_handler(Adc_GroupStateType* grp);
 static void adc_dma_irq_mux(ADC_InstanceType Adc_id);
-
 static void enable_all_irqs();
 static void disable_all_irqs();
-/*static inline void grp_single_oneshot(Adc_GroupStateType* grp);
-static inline void grp_single_continuous(Adc_GroupStateType* grp);
-static inline void grp_streaming_circular(Adc_GroupStateType* grp);
-static inline void grp_streaming_linear(Adc_GroupStateType* grp);*/
-
 /*********************************************************************************************************************/
 /*													Public APIs														 */
 /*********************************************************************************************************************/
@@ -158,8 +150,7 @@ void Adc_Init(const Adc_ConfigType* ConfigPtr){
 
 	/*  Enable lines */
 	enable_all_irqs();
-	/* Global enable */
-	cpu_irq_enable();
+
 
 	ADC_Initialized = TRUE;
 }
@@ -239,44 +230,29 @@ void Adc_StartGroupConversion (Adc_GroupType Group){
 	 * number of channels is the actual number of channels multiply by the number of samples
 	 * the trick is instead of n*m different channel we loop m times the same n channel so the config looks like a single one-shot conversion of n*m channel
 	 * */
-	boolean isStreamingAndLinear = ( (ADC_ACCESS_MODE_STREAMING == grp->AccessMode) && (ADC_STREAM_BUFFER_LINEAR == grp->BufferMode) );
-	boolean continuous = ( iscontinuous && !(isStreamingAndLinear) );
 
 	hadc->Init.ScanConvMode = grp->NumChannels > 1 ? ENABLE : DISABLE;
-	hadc->Init.ContinuousConvMode = continuous ? ENABLE : DISABLE;
+	hadc->Init.ContinuousConvMode = iscontinuous ? ENABLE : DISABLE;
 	hadc->Init.DMAContinuousRequests = ENABLE; // !!!!
 	hadc->Init.ExternalTrigConv = isSwTrigger ? ADC_SOFTWARE_START : ADC_EXTERNALTRIGCONV_T1_CC1; // in case of a HW trigger we must set the right one, but as a v1.0.0 we stub it to a default value1
-	hadc->Init.NbrOfConversion = isStreamingAndLinear ? grp->NumChannels * grp->NumSample : grp->NumChannels;
+	hadc->Init.NbrOfConversion =  grp->NumChannels;
 	hadc->Init.EOCSelection = ADC_EOC_SEQ_CONV;
 	HAL_ADC_Init(hadc);
 	//__HAL_ADC_ENABLE_IT(hadc, ADC_IT_EOC);
 
-	if(TRUE == isStreamingAndLinear){
-		/*for (uint8_t i = 0; i < grp->NumSample; i++){*/
-			for(uint8_t j = 0; j < grp->NumChannels; j++){
-			  sConfig.Channel = grp->ChannelList[j].ChannelId;
-			  sConfig.Rank = grp->ChannelList[j].Rank;
-			  sConfig.SamplingTime = grp->ChannelList[j].SampleTime;
-			  if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
-				 {
-					return;
-				 }
-			}
-		/*}*/
-	}
-	else {
-		for(uint8_t i = 0; i < grp->NumChannels; i++){
-			  sConfig.Channel = grp->ChannelList[i].ChannelId;
-			  sConfig.Rank = grp->ChannelList[i].Rank;
-			  sConfig.SamplingTime = grp->ChannelList[i].SampleTime;
 
-			  if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
-			 {
-				return;
-			 }
+	for(uint8_t i = 0; i < grp->NumChannels; i++){
+		  sConfig.Channel = grp->ChannelList[i].ChannelId;
+		  sConfig.Rank = grp->ChannelList[i].Rank;
+		  sConfig.SamplingTime = grp->ChannelList[i].SampleTime;
 
-		}
+		  if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
+		 {
+			return;
+		 }
+
 	}
+
 
 
 	Adc_DMAConfig(Group);
@@ -589,7 +565,7 @@ static void Adc_DMAConfig(Adc_GroupType Group){
 
 	boolean isContinuous = ( (ADC_ACCESS_MODE_SINGLE == grp->AccessMode) && (ADC_CONV_MODE_CONTINUOUS == grp->ConversionMode) )
 						   ||
-						   ( (ADC_ACCESS_MODE_STREAMING == grp->AccessMode) && (ADC_STREAM_BUFFER_CIRCULAR == grp->BufferMode) );
+						   ( (ADC_ACCESS_MODE_STREAMING == grp->AccessMode) /*&& (ADC_STREAM_BUFFER_CIRCULAR == grp->BufferMode)*/ );
 
 	boolean isSingleOneShot = ( (ADC_ACCESS_MODE_SINGLE == grp->AccessMode) && (ADC_CONV_MODE_ONESHOT == grp->ConversionMode) );
 
@@ -625,11 +601,6 @@ static void Adc_DMAConfig(Adc_GroupType Group){
 /*********************************************************************************************************************/
 /*												IRQ Handler (ISR)													 */
 /*********************************************************************************************************************/
-/*void ADC_IRQHandler(void){
-	adc_unit_handler(ADC1, ADC_1);
-	adc_unit_handler(ADC2, ADC_2);
-	adc_unit_handler(ADC3, ADC_3);
-}*/
 
 // ADC 1 DMA 2 Stream IRQ Handler
 void DMA2_Stream0_IRQHandler(void){
@@ -648,126 +619,6 @@ void DMA2_Stream3_IRQHandler(void){
 /*********************************************************************************************************************/
 /*												ISRs Helpers													 	 */
 /*********************************************************************************************************************/
-/*static void adc_unit_handler(ADC_TypeDef * adc, ADC_InstanceType adc_id){
-	if((adc->SR & ADC_SR_EOC) && (adc->CR1 & ADC_CR1_EOCIE)){
-		 Clear EOC by the following sequence
-		 * Read SR then Read DR
-		(void)adc->SR;
-		(void)adc->DR;
-
-		Adc_UnitStateType* unit = hwToUnits[adc_id];
-		if (NULL == unit) {
-			return;
-		}
-
-		Adc_GroupStateType* activgrp = unit->unitActiveGroup;
-		if (NULL == activgrp) {
-			return;
-		}
-		const Adc_GroupCfgType* cfg = activgrp->grpCfg;;
-		if (NULL == cfg) {
-			return;
-		}
-
-		if (ADC_ACCESS_MODE_SINGLE == cfg->AccessMode){
-			if (ADC_CONV_MODE_ONESHOT == cfg->ConversionMode){
-				grp_single_oneshot(activgrp);
-			}
-			else if (ADC_CONV_MODE_CONTINUOUS == cfg->ConversionMode) {
-				grp_single_continuous(activgrp);
-			}
-			else {
-				// Do Nothing
-			}
-		}
-		else if(ADC_ACCESS_MODE_STREAMING == cfg->AccessMode){
-			if (ADC_STREAM_BUFFER_CIRCULAR == cfg->BufferMode){
-				grp_streaming_circular(activgrp);
-			}
-			else if (ADC_STREAM_BUFFER_LINEAR == cfg->BufferMode) {
-				grp_streaming_linear(activgrp);
-			}
-			else {
-				// Do Nothing
-			}
-		}
-		else {
-			// Do Nothing
-		}
-	}
-}
-static inline void grp_single_oneshot(Adc_GroupStateType* grp){
-	grp->grpLastValidIdx = 0;
-
-	grp->grpState = ADC_COMPLETED;
-	if(0 == grp->firstRoundReady){
-		grp->firstRoundReady = 1;
-	}
-}
-
-static inline void grp_single_continuous(Adc_GroupStateType* grp){
-	// Avoid Modulo operator is very expensive
-	grp->grpLastValidIdx += grp->grpCfg->NumChannels;
-	if(grp->grpLastValidIdx > grp->grpCfg->NumChannels){
-		grp->grpLastValidIdx = 0;
-	}
-
-	grp->grpState = ADC_COMPLETED;
-
-	if(0 == grp->firstRoundReady){
-		grp->firstRoundReady = 1;
-	}
-
-}
-
-
-static inline void grp_streaming_circular(Adc_GroupStateType* grp){
-	grp->grpLastValidIdx += grp->grpCfg->NumChannels;
-	if(grp->grpLastValidIdx >= grp->grpCfg->NumChannels * grp->grpCfg->NumSample){
-		grp->grpLastValidIdx = 0;
-	}
-
-	grp->validSalmples = grp->validSalmples + 1;
-	if(grp->validSalmples > grp->grpCfg->NumSample){
-		grp->validSalmples = grp->grpCfg->NumSample;
-	}
-	grp->grpState = ADC_COMPLETED;
-
-	if(0 == grp->firstRoundReady){
-		grp->firstRoundReady = 1;
-	}
-}
-
-static inline void grp_streaming_linear(Adc_GroupStateType* grp){
-
-	if( grp->grpLastValidIdx < ( grp->grpCfg->NumChannels * (grp->grpCfg->NumSample - 1) ) ){
-
-		grp->grpLastValidIdx += grp->grpCfg->NumChannels;
-
-		grp->validSalmples = grp->validSalmples + 1;
-
-		if(grp->validSalmples > grp->grpCfg->NumSample){
-			grp->validSalmples = grp->grpCfg->NumSample;
-		}
-
-		grp->grpState = ADC_COMPLETED;
-
-		if((grp->grpCfg->NumChannels * (grp->grpCfg->NumSample - 1)) == grp->grpLastValidIdx){
-
-			grp->grpState = ADC_STREAM_COMPLETED;
-		}
-
-		if(0 == grp->firstRoundReady){
-			grp->firstRoundReady = 1;
-		}
-
-	}
-	else {
-		 Do nothing, we should not enter to this else because after filling the buffer we should stop ADC conversions, but as safety case handling
-		 * in case we don't stop the ADC immediately after filling the buffer we do not change anything - we do not change the state of the buffer !
-	}
-
-}*/
 
 static void adc_dma_irq_mux(ADC_InstanceType Adc_id){
 	Adc_UnitStateType* unit = hwToUnits[Adc_id];
@@ -822,6 +673,17 @@ static void adc_dma_tc_handler(Adc_GroupStateType* grp){
 	if (grpCfg == NULL) {
 		return;
 	}
+
+	Adc_UnitStateType* unit  = &Adc_module.moduleUnits[grpCfg->InstanceId];
+	if (NULL == unit) {
+		return;
+	}
+
+	DMA_HandleTypeDef* hadc = unit->unitHandle;
+	if (NULL == hadc) {
+		return;
+	}
+
 	boolean isSingle = ((ADC_ACCESS_MODE_SINGLE == grpCfg->AccessMode) && (ADC_CONV_MODE_CONTINUOUS == grpCfg->ConversionMode));
 
 	uint8_t nChannels =  grpCfg->NumChannels;
@@ -830,6 +692,9 @@ static void adc_dma_tc_handler(Adc_GroupStateType* grp){
 
 	boolean isLinearStreaming = ( (ADC_ACCESS_MODE_STREAMING == grpCfg->AccessMode) && (ADC_STREAM_BUFFER_LINEAR == grpCfg->BufferMode) );
 
+	if(TRUE == isLinearStreaming){
+		HAL_ADC_Stop_DMA(hadc);
+	}
 	grp->grpLastValidIdx = BufferSize - nChannels;
 	grp->grpState = isLinearStreaming ? ADC_STREAM_COMPLETED : ADC_COMPLETED;
 	grp->validSalmples = nSamples - 1;
