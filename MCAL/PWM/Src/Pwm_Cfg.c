@@ -9,16 +9,16 @@
 #include "Pwm_Cfg.h"
 
 static const Pwm_InstanceConfigType Pwm_InstancesConfig[] = {
-    {PWM_TIM2, 1000, 16000},
-	{PWM_TIM5, 1000, 16000},
-	{PWM_TIM14, 1000, 16000}
+
+    {PWM_TIM3, 999, 16000},
+
 
 };
 
 static const Pwm_ChannelConfigType Pwm_ChannelsConfig[] = {
-		{PWM_TIM2, TIM_CHANNEL_1, 0x4000, PWM_HIGH, PWM_HIGH, PWM_FIXED_PERIOD, PWM_MODE_1},
-		{PWM_TIM5, TIM_CHANNEL_1, 0x4000, PWM_HIGH, PWM_HIGH, PWM_FIXED_PERIOD, PWM_MODE_1},
-		{PWM_TIM14, TIM_CHANNEL_1, 0x4000, PWM_HIGH, PWM_HIGH, PWM_VARIABLE_PERIOD, PWM_MODE_2}
+		{PWM_TIM3, TIM_CHANNEL_1, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
+		{PWM_TIM3, TIM_CHANNEL_2, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
+		{PWM_TIM3, TIM_CHANNEL_3, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1}
 };
 
 /*
@@ -31,7 +31,7 @@ static const Pwm_ChannelConfigType Pwm_ChannelsConfig[] = {
 */
 const Pwm_ConfigType Pwm_Config = {
 		.InstanceCfgArr = Pwm_InstancesConfig,
-		.NumInstances = 3,
+		.NumInstances = 1,
 		.ChannelCfgArr = Pwm_ChannelsConfig,
 		.NumChannels = 3
 };

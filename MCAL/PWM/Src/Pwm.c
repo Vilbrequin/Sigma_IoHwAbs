@@ -90,9 +90,6 @@ void Pwm_Init (const Pwm_ConfigType* ConfigPtr){
 		__HAL_TIM_DISABLE_OCxPRELOAD(htim, pwm_channel->ChannelId);
 	#endif
 
-		if (HAL_TIM_PWM_Start(htim, pwm_channel->ChannelId) != HAL_OK) {
-				return;
-		}
 		 Pwm_ChannelRunTime[j] = *pwm_channel;
 	}
 	Pwm_Initialized = TRUE;
@@ -158,6 +155,9 @@ void Pwm_SetPeriodAndDuty (Pwm_ChannelType ChannelNumber, Pwm_PeriodType Period,
 		Absolute_Pulse = ((uint32_t)Period * DutyCycle) >> 15;
 		__HAL_TIM_SET_COMPARE(htim, channel->ChannelId, (uint16_t)Absolute_Pulse);
 	}
+	if (HAL_TIM_PWM_Start(htim, channel->ChannelId) != HAL_OK) {
+		return;
+	}
 	Pwm_ChannelRunTime[ChannelNumber].PulseTicks = (uint16_t)Absolute_Pulse;
 
 }
@@ -195,11 +195,14 @@ void Pwm_SetOutputToIdle (Pwm_ChannelType ChannelNumber){
 			__HAL_TIM_SET_COMPARE(htim, channel->ChannelId, period);
 		}
 	}
+	if (HAL_TIM_PWM_Start(htim, channel->ChannelId) != HAL_OK) {
+		return;
+	}
 }
 
 Pwm_OutputStateType Pwm_GetOutputState (Pwm_ChannelType ChannelNumber){
 	if(Pwm_Initialized == FALSE){
-		return; /* No DET yet! */
+		return PWM_LOW; /* No DET yet! */
 	}
 	if(Pwm_Initialized == FALSE){
 		return PWM_LOW;

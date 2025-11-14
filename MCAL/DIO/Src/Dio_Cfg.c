@@ -4,20 +4,21 @@
 static const Dio_ChannelConfigType Dio_ChannelCfgs[] =
 {
     {GPIOA, GPIO_PIN_5},   /* LED */
-    {GPIOC, GPIO_PIN_13}   /* USER button */
+    {GPIOC, GPIO_PIN_10},   /* LED */
+    {GPIOC, GPIO_PIN_11},   /* LED */
+    {GPIOC, GPIO_PIN_12},   /* LED */
+
+    {GPIOC, GPIO_PIN_13},   /* LED */
+    {GPIOC, GPIO_PIN_14},   /* LED */
+    {GPIOC, GPIO_PIN_15},   /* LED */
+    {GPIOH, GPIO_PIN_0},   /* LED */
 };
 
-GPIO_TypeDef* Dio_GpioPortMap[8] = { GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF, GPIOG, GPIOH};
+GPIO_TypeDef* Dio_GpioPortMap[3] = { GPIOA, GPIOC, GPIOH};
 
 const Dio_ConfigType Dio_Config =
 {
     .ChannelCfgArr = Dio_ChannelCfgs,
-    .NumChannels   = (uint8_t)(sizeof(Dio_ChannelCfgs) /
-                               sizeof(Dio_ChannelCfgs[0]))
+    .NumChannels   = DIO_NUM_CHANNELS
 };
 
-const Dio_ChannelGroupType Dio_ChannelGroup = {
-		.Port = GPIOA,
-		.GroupMask = 0x20, /* PC14 - PC13*/
-		.Offset = 5
-};

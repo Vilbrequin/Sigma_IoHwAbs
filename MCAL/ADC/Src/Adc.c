@@ -679,7 +679,7 @@ static void adc_dma_tc_handler(Adc_GroupStateType* grp){
 		return;
 	}
 
-	DMA_HandleTypeDef* hadc = unit->unitHandle;
+	ADC_HandleTypeDef* hadc = unit->unitHandle;
 	if (NULL == hadc) {
 		return;
 	}
