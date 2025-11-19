@@ -118,16 +118,16 @@ static uint8_t get_out_voltage_range_action(uint16_t Cs){
 	}
 	switch(vRange){
 		case VBM_UNDER_VOLTAGE:
-			result = fvr_in_action[Cs][VBM_UNDER_VOLTAGE - 1];
+			result = fvr_out_action[Cs][VBM_UNDER_VOLTAGE - 1];
 			break;
 		case VBM_NORMAL_VOLTAGE:
-			result = fvr_in_action[Cs][VBM_NORMAL_VOLTAGE - 1];
+			result = fvr_out_action[Cs][VBM_NORMAL_VOLTAGE - 1];
 			break;
 		case VBM_OVER_VOLTAGE:
-			result = fvr_in_action[Cs][VBM_OVER_VOLTAGE -1];
+			result = fvr_out_action[Cs][VBM_OVER_VOLTAGE -1];
 			break;
 		case VBM_EXTRA_OVER_VOLTAGE:
-			result = fvr_in_action[Cs][VBM_EXTRA_OVER_VOLTAGE - 1];
+			result = fvr_out_action[Cs][VBM_EXTRA_OVER_VOLTAGE - 1];
 			break;
 		default :
 			break;
