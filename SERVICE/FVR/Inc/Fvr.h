@@ -19,7 +19,6 @@
 
 void fvr_process_in(uint16_t Cs, uint8_t* Data);
 void fvr_process_out_tor(uint16_t CS, uint8_t OP);
-void fvr_process_out_pwm(uint16_t Cs, uint8_t OP);
-
+void fvr_process_out_pwm(uint16_t Cs, uint16_t dc, uint8_t OP);
 
 #endif /* INC_FVR_H_ */

@@ -58,13 +58,14 @@ void Pmm_Init(void);
 
 void pmm_SetOutputToIdleState(uint8_t channelId);
 
-void pmm_SetPeriodAndDuty_HighBeam(void);
+//void pmm_SetPeriodAndDuty_HighBeam(void);
+//
+//void pmm_SetPeriodAndDuty_LowBeam(void);
+//
+//void pmm_SetPeriodAndDuty_RightTI(void);
+//
+//void pmm_SetPeriodAndDuty_LeftTI(void);
 
-void pmm_SetPeriodAndDuty_LowBeam(void);
-
-void pmm_SetPeriodAndDuty_RightTI(void);
-
-void pmm_SetPeriodAndDuty_LeftTI(void);
-
+void pmm_SetDuty(Pwm_ChannelType ChID, uint16_t DutyCycle);
 
 #endif /* INC_PMM_H_ */

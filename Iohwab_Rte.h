@@ -28,16 +28,16 @@
 #define IOHWAB_Left_Turn_Indicator_Set()                    Fvr_Left_Turn_Indicator_Set()
 #define IOHWAB_Left_Turn_Indicator_Clear()                  Fvr_Left_Turn_Indicator_Clear()
 
-#define IOHWAB_PWM_High_Beam_Start()						Fvr_PWM_High_Beam_Start()
+#define IOHWAB_PWM_High_Beam_Start(dc)						Fvr_PWM_High_Beam_Start(dc)
 #define IOHWAB_PWM_High_Beam_Stop()							Fvr_PWM_High_Beam_Stop()
 
-#define IOHWAB_PWM_Low_Beam_Start()							Fvr_PWM_Low_Beam_Start()
+#define IOHWAB_PWM_Low_Beam_Start(dc)						Fvr_PWM_Low_Beam_Start(dc)
 #define IOHWAB_PWM_Low_Beam_Stop()							Fvr_PWM_Low_Beam_Stop()
 
-#define IOHWAB_PWM_Right_TI_Start()                    		Fvr_PWM_Right_TI_Start()
+#define IOHWAB_PWM_Right_TI_Start(dc)                    	Fvr_PWM_Right_TI_Start(dc)
 #define IOHWAB_PWM_Right_TI_Stop()                  		Fvr_PWM_Right_TI_Stop()
 
-#define IOHWAB_PWM_Left_TI_Start()                    		Fvr_PWM_Left_TI_Start()
+#define IOHWAB_PWM_Left_TI_Start(dc)                    	Fvr_PWM_Left_TI_Start(dc)
 #define IOHWAB_PWM_Left_TI_Stop()                  			Fvr_PWM_Left_TI_Stop()
 
 #endif /* INC_IOHWAB_RTE_H_ */

@@ -43,42 +43,20 @@ void fvr_process_out_tor(uint16_t Cs, uint8_t OP){
 }
 
 
-void fvr_process_out_pwm(uint16_t Cs, uint8_t OP){
-	if (FVR_OPERATIONEL == get_out_voltage_range_action(Cs)){
-
-		if(PMM_HEAD_LAMPS_HIGH_BEAM == Cs){
-			if(1 == OP){
-				pmm_SetPeriodAndDuty_HighBeam();
-			}else {
-				pmm_SetOutputToIdleState(PMM_HEAD_LAMPS_CHANNLE);
-			}
+void fvr_process_out_pwm(uint16_t Cs, uint16_t dc, uint8_t OP){
+	if (FVR_OPERATIONEL == get_out_voltage_range_action(Cs))
+	{
+		if(1 == OP)
+		{
+			pmm_SetDuty(Cs, dc);
 		}
-		else if(PMM_HEAD_LAMPS_LOW_BEAM == Cs){
-			if(1 == OP){
-				pmm_SetPeriodAndDuty_LowBeam();
-			}else {
-				pmm_SetOutputToIdleState(PMM_HEAD_LAMPS_CHANNLE);
-			}
-		}
-		else if(PMM_RIGHT_TI == Cs){
-			if(1 == OP){
-				pmm_SetPeriodAndDuty_RightTI();
-			}else {
-				pmm_SetOutputToIdleState(PMM_RIGHT_TI_CHANNLE);
-			}
-		}
-		else if(PMM_LEFT_TI == Cs){
-			if(1 == OP){
-				pmm_SetPeriodAndDuty_LeftTI();
-			}else {
-				pmm_SetOutputToIdleState(PMM_LEFT_TI_CHANNLE);
-			}
-		}
-		else{
-			// Do Nothing
+		else
+		{
+			pmm_SetOutputToIdleState(Cs);
 		}
 	}
-	else {
+	else
+	{
 		// Do Nothing = ignor the write cmd
 	}
 }

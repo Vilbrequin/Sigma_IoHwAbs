@@ -46,17 +46,17 @@ extern void fvr_process_out_tor(uint16_t Cs, uint8_t OP);
 #define Fvr_Left_Turn_Indicator_Set()				fvr_process_out_tor(LEFT_TURN_INDICATOR, SET)
 #define Fvr_Left_Turn_Indicator_Clear()				fvr_process_out_tor(LEFT_TURN_INDICATOR, CLEAR)
 
-#define Fvr_PWM_High_Beam_Start()					fvr_process_out_pwm(PMM_HEAD_LAMPS_HIGH_BEAM, START)
-#define Fvr_PWM_High_Beam_Stop()					fvr_process_out_pwm(PMM_HEAD_LAMPS_HIGH_BEAM, STOP)
+#define Fvr_PWM_High_Beam_Start(dc)					fvr_process_out_pwm(PMM_HEAD_LAMPS_HIGH_BEAM, dc ,START)
+#define Fvr_PWM_High_Beam_Stop()					fvr_process_out_pwm(PMM_HEAD_LAMPS_HIGH_BEAM, STOP, 0)
 
-#define Fvr_PWM_Low_Beam_Start()					fvr_process_out_pwm(PMM_HEAD_LAMPS_LOW_BEAM, START)
-#define Fvr_PWM_Low_Beam_Stop()						fvr_process_out_pwm(PMM_HEAD_LAMPS_LOW_BEAM, STOP)
+#define Fvr_PWM_Low_Beam_Start(dc)					fvr_process_out_pwm(PMM_HEAD_LAMPS_LOW_BEAM, dc ,START)
+#define Fvr_PWM_Low_Beam_Stop()						fvr_process_out_pwm(PMM_HEAD_LAMPS_LOW_BEAM, STOP, 0)
 
-#define Fvr_PWM_Right_TI_Start()					fvr_process_out_pwm(PMM_RIGHT_TI, START)
-#define Fvr_PWM_Right_TI_Stop()						fvr_process_out_pwm(PMM_RIGHT_TI, STOP)
+#define Fvr_PWM_Right_TI_Start(dc)					fvr_process_out_pwm(PMM_RIGHT_TI, dc ,START)
+#define Fvr_PWM_Right_TI_Stop()						fvr_process_out_pwm(PMM_RIGHT_TI, STOP, 0)
 
-#define Fvr_PWM_Left_TI_Start()						fvr_process_out_pwm(PMM_LEFT_TI, START)
-#define Fvr_PWM_Left_TI_Stop()						fvr_process_out_pwm(PMM_LEFT_TI, STOP)
+#define Fvr_PWM_Left_TI_Start(dc)					fvr_process_out_pwm(PMM_LEFT_TI, dc ,START)
+#define Fvr_PWM_Left_TI_Stop()						fvr_process_out_pwm(PMM_LEFT_TI, STOP, 0)
 
 
 
