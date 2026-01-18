@@ -33,9 +33,10 @@ typedef struct {
 }Iom_InputConfigType;
 
 typedef struct {
-	Iom_LevelType 	StableLevel; /* debounced logical value that can be returned by Iom_ReadChannel at any time !*/
-	Iom_LevelType 	PrevRawLevel; /* raw captured value read by Dio_ReadChannel API */
-	uint8_t 		Counter; /* Countes how many PrevRawLevel */
+	Iom_LevelType 	debounced; /* debounced logical value that can be returned by Iom_ReadChannel at any time !*/
+	Iom_LevelType 	prev_debounced; /* raw captured value read by Dio_ReadChannel API */
+	uint16_t 		cnt; 		/* Countes how many PrevRawLevel */
+	uint16_t 		press_cnt; /* Countes how many click events */
 }Iom_ChannelStateType;
 
 typedef uint8_t Iom_OutActiveLevel;
@@ -64,9 +65,10 @@ typedef struct {
 
 /********************************* IOM Public API *********************************/
 void Iom_Init(const Iom_ConfigType* CfgPtr);
-Iom_LevelType Iom_ReadChannel(Iom_ChannelId ChannelId);
-void Iom_InTask_nms(void); // n is the task periodicity in ms !
+//Iom_LevelType Iom_ReadChannel(Iom_ChannelId ChannelId);
 void Iom_WriteChannel(Iom_ChannelId ChannelId, Iom_OutLevel Level);
+void Iom_InTask_5ms(void); // n is the task periodicity in ms !
+void Iom_OutTask_5ms(void);
 
 
 #endif /* INC_IOM_H_ */

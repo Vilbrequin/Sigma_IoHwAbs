@@ -10,17 +10,21 @@
 
 #include "Iom.h"
 
-#define IOM_CH_DOOR_SWITCH   	0u
+// OUTPUTS
+#define IOM_CH_WASHER_LED   				0U
 
-#define IOM_CH_FRONT_LAMPS	  	0u
+// INPUTS
+#define IOM_CH_HIGH_BEAM_BTN	   			0U
+#define IOM_CH_LOW_BEAM_BTN   				1U
+#define IOM_CH_WASHER_BTN			   		2U
 
-#define IOM_NUM_INPUTS 			1u
+#define IOM_NUM_INPUT 						3U
 
-#define IOM_NUM_OUTPUT 			1u
+#define IOM_NUM_OUTPUT 						1U
 
-#define IOM_TASK_FREQ			50u
+#define IOM_TASK_FREQ						5u // 5 ms
 
 extern const Iom_ConfigType Iom_InputCfg;
-extern Iom_ChannelStateType Iom_ChannelState[];
+extern Iom_ChannelStateType Iom_ChannelState[IOM_NUM_INPUT];
 
 #endif /* INC_IOM_CFG_H_ */
