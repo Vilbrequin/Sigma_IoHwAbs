@@ -11,26 +11,24 @@
 #define PORT_PIN_OUTPUT_POWER_SUPPLY		1U // PA2 : ADC123_IN2
 
 // DIGITAL OUTPUT PINS
-#define PORT_PIN_DO_LAMP					2U // PA5 : Green Internal LED
-#define PORT_PIN_DO_FAN						3U
-#define PORT_PIN_DO_RI_TI					4U
-#define PORT_PIN_DO_LE_TI					5U
+#define PORT_PIN_DO_WASHER_LED				2U // PA5 : Washer (G LED)
 
 // DIGITAL INPUT PINS
-#define PORT_PIN_DI_FRI_WIN_BTN				6U // Front Right Button
-#define PORT_PIN_DI_FLE_WIN_BTN				7U // Front Left Button
-#define PORT_PIN_DI_BRI_WIN_BTN				8U // Back Right Button
-#define PORT_PIN_DI_BLE_WIN_BTN				9U // Back Left Button
+#define PORT_PIN_DI_HIGH_BEAM_BTN			3U // PC13 : Front Right Button
+#define PORT_PIN_DI_LOW_BEAM_BTN			4U // PC14 : Front Left Button
+#define PORT_PIN_DI_WASHER_BTN				5U // PC15 : Back Right Button
 
 // PWM OUTPUT PINS
-#define PORT_PIN_PWM_HEAD_LAMPS				10U //
-#define PORT_PIN_PWM_RIGHT_TI				11U //
-#define PORT_PIN_PWM_LEFT_TI				12U //
+#define PORT_PIN_PWM_HIGH_BEAM				6U // PB4 : HBeam Out
+#define PORT_PIN_PWM_LOW_BEAM				7U // PB5 : LBeam Out
+#define PORT_PIN_PWM_WIPER					8U // PC8 : Wiper Out
 
 
 // ANALOG INPUT PINS
-#define PORT_PIN_AIN_TEMP_SENSOR			13U //
-#define PORT_PIN_AIN_LUM_SENSOR				14U //
+#define PORT_PIN_AIN_WIPER_BTN				9U //
+#define PORT_PIN_AIN_TEMP_SENSOR			10U //
+#define PORT_PIN_AIN_OIL_SENSOR				11U //
+#define PORT_PIN_AIN_VBATT_SENSOR			12U //
 
 
 extern const Port_ConfigType Port_Config;
