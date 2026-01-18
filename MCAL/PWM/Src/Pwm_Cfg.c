@@ -8,27 +8,27 @@
 
 #include "Pwm_Cfg.h"
 
-static const Pwm_InstanceConfigType Pwm_InstancesConfig[] = {
 
-    {PWM_TIM3, 999, 16000},
+/*
+ * Fpwm = Fcnt/(ARR + 1)
+ * Fcnt = Ftim/(PSC + 1)
+ * Fpwm = Ftim/[(ARR + 1) * (PSC + 1)]
+ *
+ */
+static const Pwm_InstanceConfigType Pwm_InstancesConfig[] = {
+			/*PSC - ARR*/
+    {PWM_TIM3, 0, 39},
 
 
 };
 
 static const Pwm_ChannelConfigType Pwm_ChannelsConfig[] = {
-		{PWM_TIM3, TIM_CHANNEL_1, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
-		{PWM_TIM3, TIM_CHANNEL_2, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
-		{PWM_TIM3, TIM_CHANNEL_3, 0x4000, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1}
+		{PWM_TIM3, TIM_CHANNEL_1, 0x0, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
+		{PWM_TIM3, TIM_CHANNEL_2, 0x0, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1},
+		{PWM_TIM3, TIM_CHANNEL_3, 0x0, PWM_HIGH, PWM_LOW, PWM_VARIABLE_PERIOD, PWM_MODE_1}
 };
 
-/*
- * typedef struct {
-	const Pwm_InstanceConfigType*	InstanceCfgArr;
-	uint8_t							NumInstances;
-	const Pwm_ChannelConfigType* 	ChannelCfgArr;
-	uint8_t                   		NumChannels;
-}Pwm_ConfigType;
-*/
+
 const Pwm_ConfigType Pwm_Config = {
 		.InstanceCfgArr = Pwm_InstancesConfig,
 		.NumInstances = 1,

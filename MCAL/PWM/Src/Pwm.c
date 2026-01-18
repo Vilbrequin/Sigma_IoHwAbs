@@ -123,9 +123,9 @@ void Pwm_SetDutyCycle (Pwm_ChannelType ChannelNumber, uint16_t DutyCycle){
 
 	__HAL_TIM_SET_COMPARE(htim, channel->ChannelId, (uint16_t)Absolute_Pulse);
 
-	if (HAL_TIM_PWM_Start(htim, channel->ChannelId) != HAL_OK) {
-		return;
-	}
+//	if (HAL_TIM_PWM_Start(htim, channel->ChannelId) != HAL_OK) {
+//		return;
+//	}
 
 	Pwm_ChannelRunTime[ChannelNumber].PulseTicks = (uint16_t)Absolute_Pulse;
 }
