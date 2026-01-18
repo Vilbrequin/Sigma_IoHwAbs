@@ -38,7 +38,8 @@ typedef struct {
 }Dio_ChannelGroupType;
 
 typedef struct {
-    const Dio_ChannelConfigType *ChannelCfgArr;
+    const Dio_ChannelConfigType *InChannelCfgArr;
+    const Dio_ChannelConfigType *OutChannelCfgArr;
     uint8_t                      NumChannels;
 } Dio_ConfigType;
 

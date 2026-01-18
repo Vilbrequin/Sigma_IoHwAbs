@@ -23,7 +23,7 @@ Dio_LevelType Dio_ReadChannel(Dio_ChannelType ch)
 {
     if (ch >= Dio_Cfg->NumChannels) { return STD_LOW; }
 
-    const Dio_ChannelConfigType *c = &Dio_Cfg->ChannelCfgArr[ch];
+    const Dio_ChannelConfigType *c = &Dio_Cfg->InChannelCfgArr[ch];
     return (HAL_GPIO_ReadPin(c->Port, c->PinMask) == GPIO_PIN_SET) ? STD_HIGH : STD_LOW;
 }
 
@@ -31,7 +31,7 @@ void Dio_WriteChannel(Dio_ChannelType ch, Dio_LevelType lvl)
 {
     if (ch >= Dio_Cfg->NumChannels) { return; }
 
-    const Dio_ChannelConfigType *c = &Dio_Cfg->ChannelCfgArr[ch];
+    const Dio_ChannelConfigType *c = &Dio_Cfg->OutChannelCfgArr[ch];
     HAL_GPIO_WritePin(c->Port, c->PinMask, (lvl == STD_HIGH) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
@@ -39,7 +39,7 @@ Dio_LevelType Dio_FlipChannel(Dio_ChannelType ch)
 {
     if (ch >= Dio_Cfg->NumChannels) { return STD_LOW; }
 
-    const Dio_ChannelConfigType *c = &Dio_Cfg->ChannelCfgArr[ch];
+    const Dio_ChannelConfigType *c = &Dio_Cfg->OutChannelCfgArr[ch];
 
     uint32_t odr = c->Port->ODR;
     uint32_t pin = c->PinMask;
