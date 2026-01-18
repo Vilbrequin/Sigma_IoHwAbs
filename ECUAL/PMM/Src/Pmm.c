@@ -6,14 +6,83 @@
  */
 
 #include "Pmm.h"
+#include "Pmm_Rte.h"
+
+
+static uint16_t PMM_HIGH_BEAM_DUTY_CYCLE = 0;
+static uint16_t PMM_LOW_BEAM_DUTY_CYCLE = 0;
+static uint16_t PMM_WIPER_DUTY_CYCLE = 0;
 
 void Pmm_Init(void){
 	Pwm_Init(&Pwm_Config);
+	Pmm_SetOutputToIdleState();
+
 }
 
-void pmm_SetOutputToIdleState(uint8_t channelId){
-	Pwm_SetOutputToIdle(channelId);
+void Pmm_SetOutputToIdleState(void){
+	Pwm_SetOutputToIdle(PMM_HIGH_BEAM_CHANNLE);
+	Pwm_SetOutputToIdle(PMM_LOW_BEAM_CHANNLE);
+	Pwm_SetOutputToIdle(PMM_WIPER_CHANNLE);
 }
+
+void Pmm_SetDutyCycle_HighBeam(void){
+	uint8_t HighBeamDc = 0;
+	uint8_t isAllowed = 0;
+	// 1 read the app duty cycle
+	Rte_read_RP_HighBeamDc_HighBeamDc(&HighBeamDc);
+
+	// 2 Adapt the duty cycle to 0x0000 - 0x8000 range :
+	PMM_HIGH_BEAM_DUTY_CYCLE = PMM_ADAPT_DUTY_CYCLE(HighBeamDc);
+
+	// 3 Set duty cycle
+	Rte_read_RP_OutHighBeamAllowed_OutHighBeamAllowed(&isAllowed);
+	if(isAllowed){
+		Pwm_SetDutyCycle(PMM_HIGH_BEAM_CHANNLE, PMM_HIGH_BEAM_DUTY_CYCLE);
+	}
+}
+
+void Pmm_SetDutyCycle_LowBeam(void){
+	uint8_t LowBeamDc = 0;
+	uint8_t isAllowed = 0;
+	// 1 read the app duty cycle
+	Rte_read_RP_LowBeamDc_LowBeamDc(&LowBeamDc);
+
+	// 2 Adapt the duty cycle to 0x0000 - 0x8000 range :
+	PMM_LOW_BEAM_DUTY_CYCLE = PMM_ADAPT_DUTY_CYCLE(LowBeamDc);
+
+	// 3 Set duty cycle
+	Rte_read_RP_OutLowBeamAllowed_OutLowBeamAllowed(&isAllowed);
+	if(isAllowed){
+		Pwm_SetDutyCycle(PMM_LOW_BEAM_CHANNLE, PMM_LOW_BEAM_DUTY_CYCLE);
+	}
+}
+
+void Pmm_SetDutyCycle_Wipper(void){
+	uint8_t WipperDc = 0;
+	uint8_t isAllowed = 0;
+	// 1 read the app duty cycle
+	Rte_read_RP_WipperDc_WipperDc(&WipperDc);
+
+	// 2 Adapt the duty cycle to 0x0000 - 0x8000 range :
+	PMM_WIPER_DUTY_CYCLE= PMM_ADAPT_DUTY_CYCLE(WipperDc);
+
+	// 3 Set duty cycle
+	Rte_read_RP_OutWiperAllowed_OutWiperAllowed(&isAllowed);
+	if(isAllowed){
+		Pwm_SetDutyCycle(PMM_WIPER_CHANNLE, PMM_WIPER_DUTY_CYCLE);
+	}
+}
+
+
+void Pmm_Task_10ms(void)
+{
+	Pmm_SetDutyCycle_HighBeam();
+	Pmm_SetDutyCycle_LowBeam();
+	Pmm_SetDutyCycle_Wipper();
+}
+//void pmm_SetOutputToIdleState(uint8_t channelId){
+//	Pwm_SetOutputToIdle(channelId);
+//}
 
 //void pmm_SetPeriodAndDuty_HighBeam(void){
 //	uint16_t duty_cycle = PMM_ADAPT_DUTY_CYCLE(PMM_HEAD_LAMPS_HIGH_BEAM_DC);
