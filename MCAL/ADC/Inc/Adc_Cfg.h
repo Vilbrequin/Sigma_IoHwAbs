@@ -33,11 +33,13 @@
 #define ADC_IN_SESNORS_GRP						0x01
 
 /*Group Channels' rank*/
-#define ADC_TEMPERATUR_SENSOR_CHANNEL			0x00
-#define ADC_LUMINOSITY_SENSOR_CHANNEL			0x01
+#define ADC_WIPER_BUTTON_CHANNEL				0x00
+#define ADC_E_TEMP_SENSOR_CHANNEL				0x01 // engine temperature sensor
+#define ADC_OIL_PRESS_SENSOR_CHANNEL			0x02 // oil pressure sensor
+#define ADC_BATT_VOLT_SENSOR_CHANNEL			0x03 // Battery voltage sensor
 
 /*Group number of channels*/
-#define ADC_IN_SESNORS_GRP_N_CHANNELS			0x02
+#define ADC_IN_SESNORS_GRP_N_CHANNELS			0x04
 /*Group number of samples*/
 #define ADC_IN_SESNORS_GRP_N_SAMPLES			0x05
 /*Group 's buffer length*/

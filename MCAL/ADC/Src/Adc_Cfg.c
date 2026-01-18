@@ -21,15 +21,39 @@ static const Adc_ChannelCfgType channles_grp_1_adc_1[] = {
 
 static const Adc_ChannelCfgType channles_grp_1_adc_2[] = {
 		{.ChannelId = ADC_CH12, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 1},
-		{.ChannelId = ADC_CH13, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 2}
+		{.ChannelId = ADC_CH13, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 2},
+		{.ChannelId = ADC_CH14, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 3},
+		{.ChannelId = ADC_CH15, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 4},
 };
 
 
 
 
 static const Adc_GroupCfgType groupes []  = {
-		{.InstanceId = 0, .GroupId = ADC_IN_OUT_POWER_SUPPLY_GRP, .ChannelList = channles_grp_1_adc_1, .NumChannels = 2, .ConversionMode = ADC_CONV_MODE_CONTINUOUS, .TriggSrc = ADC_TRIGG_SRC_SW, .AccessMode = ADC_ACCESS_MODE_STREAMING, .NumSample = 3, .BufferMode = ADC_STREAM_BUFFER_LINEAR},
-		{.InstanceId = 1, .GroupId = ADC_IN_SESNORS_GRP, .ChannelList = channles_grp_1_adc_2, .NumChannels = 2, .ConversionMode = ADC_CONV_MODE_CONTINUOUS, .TriggSrc = ADC_TRIGG_SRC_SW, .AccessMode = ADC_ACCESS_MODE_STREAMING, .NumSample = 5, .BufferMode = ADC_STREAM_BUFFER_LINEAR}
+		// PwS ADC Grp
+		{
+			.InstanceId = 0,
+			.GroupId = ADC_IN_OUT_POWER_SUPPLY_GRP,
+			.ChannelList = channles_grp_1_adc_1,
+			.NumChannels = ADC_IN_OUT_POWER_SUPPLY_GRP_N_CHANNELS,
+			.ConversionMode = ADC_CONV_MODE_ONESHOT,
+			.TriggSrc = ADC_TRIGG_SRC_SW,
+			.AccessMode = ADC_ACCESS_MODE_SINGLE,
+			.NumSample = ADC_IN_OUT_POWER_SUPPLY_GRP_N_SAMPLES,
+			.BufferMode = ADC_STREAM_BUFFER_LINEAR
+		},
+		// Sensors ADc Grp
+		{
+			.InstanceId = 1,
+			.GroupId = ADC_IN_SESNORS_GRP,
+			.ChannelList = channles_grp_1_adc_2,
+			.NumChannels = ADC_IN_SESNORS_GRP_N_CHANNELS,
+			.ConversionMode = ADC_CONV_MODE_ONESHOT,
+			.TriggSrc = ADC_TRIGG_SRC_SW,
+			.AccessMode = ADC_ACCESS_MODE_SINGLE,
+			.NumSample = ADC_IN_SESNORS_GRP_N_SAMPLES,
+			.BufferMode = ADC_STREAM_BUFFER_LINEAR
+		}
 };
 
 const Adc_ConfigType Adc_Config = {
