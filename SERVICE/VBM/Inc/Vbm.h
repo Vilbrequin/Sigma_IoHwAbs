@@ -52,6 +52,10 @@ typedef uint8_t			vbm_hyst_type;
 
 void vbm_ranges_init(void);
 vbm_range_type vbm_get_range(vbm_vbatt_type inVal, Vbm_batt_pws VbattInPwS);
+void Vbm_ProcessIn(void);
+void Vbm_ProcessOut(void);
+void Vbm_Init(void);
+void Vbm_Task_10ms(void);
 
 
 
