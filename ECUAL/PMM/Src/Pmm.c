@@ -60,11 +60,16 @@ void Pmm_SetDutyCycle_LowBeam(void){
 void Pmm_SetDutyCycle_Wipper(void){
 	uint8_t WipperDc = 0;
 	uint8_t isAllowed = 0;
+	uint32_t pulse_len = 0;
+	uint8_t pulse_percent = 0;
+
 	// 1 read the app duty cycle
 	Rte_read_RP_WipperDc_WipperDc(&WipperDc);
 
+	pulse_len = 100 + (WipperDc * (500 - 100) / 180);
+	pulse_percent = (pulse_len - 20)/40;
 	// 2 Adapt the duty cycle to 0x0000 - 0x8000 range :
-	PMM_WIPER_DUTY_CYCLE= PMM_ADAPT_DUTY_CYCLE(WipperDc);
+	PMM_WIPER_DUTY_CYCLE= PMM_ADAPT_DUTY_CYCLE(pulse_percent);
 
 	// 3 Set duty cycle
 	Rte_read_RP_OutWiperAllowed_OutWiperAllowed(&isAllowed);
