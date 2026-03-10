@@ -24,6 +24,7 @@ static const Adc_ChannelCfgType channles_grp_1_adc_2[] = {
 		{.ChannelId = ADC_CH13, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 2},
 		{.ChannelId = ADC_CH14, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 3},
 		{.ChannelId = ADC_CH15, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 4},
+		{.ChannelId = ADC_CH10, .SampleTime = ADC_SAMPLE_TIME_15_CYCLES, .Rank = 5},//
 };
 
 

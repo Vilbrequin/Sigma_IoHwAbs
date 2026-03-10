@@ -191,6 +191,7 @@ typedef struct {
 	const Adc_GroupCfgType*				grpCfg;
 	volatile Adc_StatusType				grpState; // changed in ISR/DMA
 	Adc_ValueGroupType*					grpBuff;
+	Adc_ValueGroupType*					stableBuff;
 	volatile uint16_t					grpLastValidIdx; /* last written index (streaming) */
 	boolean 							isStarted : 1; // flag that is set when a group is started via the Adc_StartGroupConversion	API
 	volatile boolean					firstRoundReady : 1; // flags that is set when the first EOS done and get cleared only when a group is stopped and rested !

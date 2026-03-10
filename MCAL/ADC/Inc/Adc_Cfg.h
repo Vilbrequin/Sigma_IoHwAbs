@@ -38,8 +38,10 @@
 #define ADC_OIL_PRESS_SENSOR_CHANNEL			0x02 // oil pressure sensor
 #define ADC_BATT_VOLT_SENSOR_CHANNEL			0x03 // Battery voltage sensor
 
+#define ADC_WIPP_POS_SENSOR_CHAMMEL				0X04 // Wiper position sensor to track if the wiper is in it's init state
+
 /*Group number of channels*/
-#define ADC_IN_SESNORS_GRP_N_CHANNELS			0x04
+#define ADC_IN_SESNORS_GRP_N_CHANNELS			0x05
 /*Group number of samples*/
 #define ADC_IN_SESNORS_GRP_N_SAMPLES			0x05
 /*Group 's buffer length*/
