@@ -27,6 +27,7 @@
 #define ADM_OIL_PRESSURE_CHANNEL				1U
 #define ADM_BATTERY_VOLTAGE_CHANNEL				2U
 #define ADM_WIPER_LEVEL_CHANNEL					3U
+#define ADM_WIPER_POSITION_CHANNEL				4U
 
 /***************************************************************************************************************************************/
 /*														 	API PROTOTYPE															   */

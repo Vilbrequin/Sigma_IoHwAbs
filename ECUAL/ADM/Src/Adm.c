@@ -21,11 +21,13 @@ static uint16_t Adm_Pws_buffer[ADC_IN_OUT_POWER_SUPPLY_GRP_N_CHANNELS];
 static uint16_t Adm_Pws_channel_in_samples[ADM_DEBOUNCE_AVG];
 static uint16_t Adm_Pws_channel_out_samples[ADM_DEBOUNCE_AVG];
 
+static uint16_t Adm_Sensor_buffer_dma[ADC_IN_SESNORS_GRP_N_CHANNELS];
 static uint16_t Adm_Sensor_buffer[ADC_IN_SESNORS_GRP_N_CHANNELS];
 static uint16_t Adm_Sensor_channel_1_samples[ADM_DEBOUNCE_AVG];
 static uint16_t Adm_Sensor_channel_2_samples[ADM_DEBOUNCE_AVG];
 static uint16_t Adm_Sensor_channel_3_samples[ADM_DEBOUNCE_AVG];
 static uint16_t Adm_Sensor_channel_4_samples[ADM_DEBOUNCE_AVG];
+static uint16_t Adm_Sensor_channel_5_samples[ADM_DEBOUNCE_AVG];
 
 static uint16_t Adm_Sensor_grp_val[ADC_IN_SESNORS_GRP_N_CHANNELS] = {0};
 static uint16_t Adm_PwS_grp_val[ADC_IN_OUT_POWER_SUPPLY_GRP_N_CHANNELS] = {0};
@@ -40,14 +42,21 @@ void Adm_SensorGrp(void)
 {
 
 	uint8_t isAllowed = 0;
+	uint8_t wiper_pos = 0;
 
 	if(iterator_Sensor < ADM_DEBOUNCE_AVG)
 	{
 		Adc_StartGroupConversion(ADC_IN_SESNORS_GRP);
+
+		while (Adc_GetGroupStatus(ADC_IN_SESNORS_GRP) != ADC_STREAM_COMPLETED);
+
+		Adc_ReadGroup(ADC_IN_SESNORS_GRP, Adm_Sensor_buffer);
+
 		Adm_Sensor_channel_1_samples[iterator_Sensor] = Adm_Sensor_buffer[0];
 		Adm_Sensor_channel_2_samples[iterator_Sensor] = Adm_Sensor_buffer[1];
 		Adm_Sensor_channel_3_samples[iterator_Sensor] = Adm_Sensor_buffer[2];
 		Adm_Sensor_channel_4_samples[iterator_Sensor] = Adm_Sensor_buffer[3];
+		Adm_Sensor_channel_5_samples[iterator_Sensor] = Adm_Sensor_buffer[4];
 
 		iterator_Sensor ++;
 	}
@@ -57,6 +66,7 @@ void Adm_SensorGrp(void)
 		Adm_Sensor_grp_val[1] = Adm_ReadAverage(Adm_Sensor_channel_2_samples, ADM_DEBOUNCE_AVG);
 		Adm_Sensor_grp_val[2] = Adm_ReadAverage(Adm_Sensor_channel_3_samples, ADM_DEBOUNCE_AVG);
 		Adm_Sensor_grp_val[3] = Adm_ReadAverage(Adm_Sensor_channel_4_samples, ADM_DEBOUNCE_AVG);
+		Adm_Sensor_grp_val[4] = Adm_ReadAverage(Adm_Sensor_channel_5_samples, ADM_DEBOUNCE_AVG);
 
 		iterator_Sensor = 0;
 
@@ -77,6 +87,18 @@ void Adm_SensorGrp(void)
 		Rte_read_RP_InBattVoltAllowed_InBattVoltAllowed(&isAllowed);
 		if(isAllowed){
 			Rte_write_PP_BattVoltage_BattVoltage(Adm_Sensor_grp_val[3]);
+		}
+		//
+		Rte_read_RP_InWiperPosAllowed_InWiperPosAllowed(&isAllowed);
+		if(isAllowed){
+			if(Adm_Sensor_grp_val[4] < 1000)
+			{
+				wiper_pos = 1;
+			}
+			else {
+				wiper_pos = 0;
+			}
+			Rte_write_PP_WipperPos_WipperPos(wiper_pos);
 		}
 	}
 }
@@ -191,7 +213,7 @@ void Adm_Init(void){
 
 	Adc_SetupResultBuffer(ADC_IN_OUT_POWER_SUPPLY_GRP, Adm_Pws_buffer);
 
-	Adc_SetupResultBuffer(ADC_IN_SESNORS_GRP, Adm_Sensor_buffer);
+	Adc_SetupResultBuffer(ADC_IN_SESNORS_GRP, Adm_Sensor_buffer_dma);
 }
 
 void Adm_task_5ms(void){
