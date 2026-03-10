@@ -29,6 +29,7 @@
 #define PORT_PIN_AIN_TEMP_SENSOR			10U //
 #define PORT_PIN_AIN_OIL_SENSOR				11U //
 #define PORT_PIN_AIN_VBATT_SENSOR			12U //
+#define PORT_WIPP_POS_SENSOR				13U //
 
 
 extern const Port_ConfigType Port_Config;
