@@ -11,7 +11,7 @@
 #include "Fvr.h"
 
 #define FVR_NUM_OUT_CHANNELS				4U
-#define FVR_NUM_IN_CHANNELS					7U
+#define FVR_NUM_IN_CHANNELS					8U
 
 
 extern const uint8_t fvr_out_channels[FVR_NUM_OUT_CHANNELS];

@@ -26,12 +26,28 @@
 #define FVR_OIL_PRESSURE_CHANNEL		4U
 #define FVR_BATTERY_VOLTAGE_CHANNEL		5U
 #define FVR_WIPER_LEVEL_CHANNEL			6U
+#define FVR_WIPER_POSITION_CHANNEL		7U
 
 /*FVR Valid Ranges*/
 #define FVR_OFF							0U
 #define FVR_IGNORED						1U
 #define FVR_OPERATIONEL					2U
 
+void Fvr_HighBeamBtn(void);
+void Fvr_LowBeamBtn(void);
+void Fvr_WasherBtn(void);
+void Fvr_EnginTemp(void);
+void Fvr_OilPress(void);
+void Fvr_BattVolt(void);
+void Fvr_WiperLvl(void);
+
+void Fvr_WasherLoad(void);
+void Fvr_HighBeamLoad(void);
+void Fvr_LowBeamLoad(void);
+void Fvr_WiperLoad(void);
+
+void Fvr_processIn(void);
+void Fvr_ProcessOut(void);
 
 void Fvr_InTask_10ms(void);
 void Fvr_OutTask_10ms(void);

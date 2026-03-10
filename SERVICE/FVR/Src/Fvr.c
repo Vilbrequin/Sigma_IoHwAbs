@@ -10,21 +10,7 @@
 #include "Vbm.h"
 #include "Fvr.h"
 
-static void Fvr_HighBeamBtn(void);
-static void Fvr_LowBeamBtn(void);
-static void Fvr_WasherBtn(void);
-static void Fvr_EnginTemp(void);
-static void Fvr_OilPress(void);
-static void Fvr_BattVolt(void);
-static void Fvr_WiperLvl(void);
 
-static void Fvr_WasherLoad(void);
-static void Fvr_HighBeamLoad(void);
-static void Fvr_LowBeamLoad(void);
-static void Fvr_WiperLoad(void);
-
-static void Fvr_processIn(void);
-static void Fvr_ProcessOut(void);
 
 static uint8_t get_in_voltage_range_action(uint16_t Cs);
 static uint8_t get_out_voltage_range_action(uint16_t Cs);
@@ -138,10 +124,18 @@ void Fvr_BattVolt(void){
 
 void Fvr_WiperLvl(void){
 	uint8_t range = get_in_voltage_range_action(FVR_WIPER_LEVEL_CHANNEL);
+	uint8_t range_pos = get_in_voltage_range_action(FVR_WIPER_POSITION_CHANNEL);
+
 	if (FVR_OPERATIONEL == range){
 		Rte_write_PP_InWiperLvlAllowed_InWiperLvlAllowed(1);
 	}else{
 		Rte_write_PP_InWiperLvlAllowed_InWiperLvlAllowed(0);
+	}
+
+	if (FVR_OPERATIONEL == range_pos){
+		Rte_write_PP_InWiperPosAllowed_InWiperPosAllowed(1);
+	}else{
+		Rte_write_PP_InWiperPosAllowed_InWiperPosAllowed(0);
 	}
 }
 
