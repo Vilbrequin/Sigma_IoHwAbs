@@ -26,6 +26,7 @@ typedef struct {
 	uint16_t	EnginTemp;
 	uint16_t	OilPress;
 	uint16_t	BattVoltage;
+	uint16_t 	WipperPos;
 
 	uint16_t	InPwS;
 	uint16_t	OutPwS;
@@ -50,6 +51,8 @@ typedef struct {
     uint8_t     InOilPressAllowed;
     uint8_t     InBattVoltAllowed;
     uint8_t     InWiperLvlAllowed;
+    uint8_t     InWiperPosAllowed;
+
 
     // FVR Out Validity
     uint8_t     OutWasherAllowed;
@@ -57,6 +60,9 @@ typedef struct {
     uint8_t     OutLowBeamAllowed;
     uint8_t     OutWiperAllowed;
 
+
+    // Veh Mode
+    uint8_t		VehicleMode;
 }StructRteType;
 
 extern volatile StructRteType StructRte;

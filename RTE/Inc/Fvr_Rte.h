@@ -22,6 +22,7 @@
 #define Rte_write_PP_InOilPressAllowed_InOilPressAllowed(value)			Rte_write_data(InOilPressAllowed, value)
 #define Rte_write_PP_InBattVoltAllowed_InBattVoltAllowed(value)			Rte_write_data(InBattVoltAllowed, value)
 #define Rte_write_PP_InWiperLvlAllowed_InWiperLvlAllowed(value)			Rte_write_data(InWiperLvlAllowed, value)
+#define Rte_write_PP_InWiperPosAllowed_InWiperPosAllowed(value)			Rte_write_data(InWiperPosAllowed, value)
 
 #define Rte_write_PP_OutWasherAllowed_OutWasherAllowed(value)			Rte_write_data(OutWasherAllowed, value)
 #define Rte_write_PP_OutHighBeamAllowed_OutHighBeamAllowed(value)		Rte_write_data(OutHighBeamAllowed, value)
