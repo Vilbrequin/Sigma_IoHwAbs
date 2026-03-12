@@ -1,0 +1,5 @@
+BSW/ECUAL/IOM/Src/Iom.c:21:13:Iom_Process_In	24	static
+BSW/ECUAL/IOM/Src/Iom.c:72:6:Iom_Init	40	static
+BSW/ECUAL/IOM/Src/Iom.c:103:6:Iom_WriteChannel	24	static
+BSW/ECUAL/IOM/Src/Iom.c:123:6:Iom_InTask_5ms	16	static
+BSW/ECUAL/IOM/Src/Iom.c:159:6:Iom_OutTask_5ms	16	static

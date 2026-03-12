@@ -1,0 +1,2 @@
+PLATFORM/Sch/Src/user_timebase.c:13:10:User_GetMs	1
+PLATFORM/Sch/Src/user_timebase.c:19:6:User_Timebase_Inc1ms	1

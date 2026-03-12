@@ -1,0 +1,17 @@
+BSW/MCAL/ADC/Src/Adc.c:82:6:Adc_Init	48	static
+BSW/MCAL/ADC/Src/Adc.c:167:16:Adc_SetupResultBuffer	24	static
+BSW/MCAL/ADC/Src/Adc.c:200:6:Adc_StartGroupConversion	64	static
+BSW/MCAL/ADC/Src/Adc.c:284:16:Adc_ReadGroup	40	static
+BSW/MCAL/ADC/Src/Adc.c:368:16:Adc_GetGroupStatus	24	static
+BSW/MCAL/ADC/Src/Adc.c:385:6:Adc_StopGroupConversion	32	static
+BSW/MCAL/ADC/Src/Adc.c:431:25:Adc_GetStreamLastPointer	40	static
+BSW/MCAL/ADC/Src/Adc.c:540:20:Adc_TimerEnableClock	32	static
+BSW/MCAL/ADC/Src/Adc.c:558:13:Adc_DMAConfig	40	static
+BSW/MCAL/ADC/Src/Adc.c:613:6:DMA2_Stream0_IRQHandler	8	static
+BSW/MCAL/ADC/Src/Adc.c:618:6:DMA2_Stream1_IRQHandler	8	static
+BSW/MCAL/ADC/Src/Adc.c:623:6:DMA2_Stream3_IRQHandler	8	static
+BSW/MCAL/ADC/Src/Adc.c:630:13:adc_dma_irq_mux	40	static
+BSW/MCAL/ADC/Src/Adc.c:659:13:adc_dma_ht_handler	32	static
+BSW/MCAL/ADC/Src/Adc.c:679:13:adc_dma_tc_handler	40	static
+BSW/MCAL/ADC/Src/Adc.c:723:13:enable_all_irqs	8	static
+BSW/MCAL/ADC/Src/Adc.c:729:13:disable_all_irqs	8	static

@@ -1,0 +1,9 @@
+BSW/MCAL/DIO/Src/Dio.c:17:6:Dio_Init	16	static
+BSW/MCAL/DIO/Src/Dio.c:22:15:Dio_ReadChannel	24	static
+BSW/MCAL/DIO/Src/Dio.c:30:6:Dio_WriteChannel	24	static
+BSW/MCAL/DIO/Src/Dio.c:38:15:Dio_FlipChannel	32	static
+BSW/MCAL/DIO/Src/Dio.c:56:19:Dio_ReadPort	16	static
+BSW/MCAL/DIO/Src/Dio.c:64:6:Dio_WritePort	40	static
+BSW/MCAL/DIO/Src/Dio.c:78:19:Dio_ReadChannelGroup	32	static
+BSW/MCAL/DIO/Src/Dio.c:97:6:Dio_WriteChannelGroup	48	static
+BSW/MCAL/DIO/Src/Dio.c:116:6:Dio_MaskedWritePort	40	static

@@ -1,0 +1,5 @@
+PLATFORM/Core/Src/irq_handle.c:13:6:nvic_enable_irq	2
+PLATFORM/Core/Src/irq_handle.c:19:6:nvic_disable_irq	2
+PLATFORM/Core/Src/irq_handle.c:27:6:nvic_set_priority	2
+PLATFORM/Core/Src/irq_handle.c:38:6:cpu_irq_enable	1
+PLATFORM/Core/Src/irq_handle.c:39:6:cpu_irq_disable	1

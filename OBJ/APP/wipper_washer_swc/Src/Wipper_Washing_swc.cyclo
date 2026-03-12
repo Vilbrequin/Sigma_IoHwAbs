@@ -1,0 +1,5 @@
+APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:8:6:Wipper_reader	9
+APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:29:6:washer_wipper_part1	21
+APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:161:6:washer_manger	17
+APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:274:6:pwm_wipper_calc	5
+APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:341:7:Wipper_Washer_runnable	1

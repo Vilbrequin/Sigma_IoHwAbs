@@ -1,0 +1,6 @@
+OBJ/BSW/SERVICE/FVR/Src/Fvr_cfg.o: BSW/SERVICE/FVR/Src/Fvr_cfg.c \
+ BSW/SERVICE/FVR/Inc/Fvr_cfg.h BSW/SERVICE/FVR/Inc/Fvr.h \
+ BSW/SERVICE/FVR/Inc/Fvr.h
+BSW/SERVICE/FVR/Inc/Fvr_cfg.h:
+BSW/SERVICE/FVR/Inc/Fvr.h:
+BSW/SERVICE/FVR/Inc/Fvr.h:
