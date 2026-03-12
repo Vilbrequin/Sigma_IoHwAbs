@@ -1,5 +1,0 @@
-BSW/MCAL/PORT/Src/Port.c:13:13:Port_EnableClock	9
-BSW/MCAL/PORT/Src/Port.c:25:6:Port_Init	6
-BSW/MCAL/PORT/Src/Port.c:69:6:Port_SetPinDirection	3
-BSW/MCAL/PORT/Src/Port.c:84:6:Port_RefreshPortDirection	3
-BSW/MCAL/PORT/Src/Port.c:99:6:Port_SetPinMode	4

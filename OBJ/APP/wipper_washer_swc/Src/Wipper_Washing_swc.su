@@ -1,5 +1,0 @@
-APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:8:6:Wipper_reader	16	static
-APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:29:6:washer_wipper_part1	248	static
-APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:161:6:washer_manger	192	static
-APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:274:6:pwm_wipper_calc	96	static
-APP/wipper_washer_swc/Src/Wipper_Washing_swc.c:341:7:Wipper_Washer_runnable	72	static

@@ -1,6 +1,0 @@
-BSW/SERVICE/VBM/Src/Vbm.c:27:6:vbm_ranges_init	4	static
-BSW/SERVICE/VBM/Src/Vbm.c:34:16:vbm_get_range	24	static
-BSW/SERVICE/VBM/Src/Vbm.c:249:6:Vbm_ProcessIn	16	static
-BSW/SERVICE/VBM/Src/Vbm.c:259:6:Vbm_ProcessOut	16	static
-BSW/SERVICE/VBM/Src/Vbm.c:269:6:Vbm_Init	8	static
-BSW/SERVICE/VBM/Src/Vbm.c:273:6:Vbm_Task_10ms	8	static

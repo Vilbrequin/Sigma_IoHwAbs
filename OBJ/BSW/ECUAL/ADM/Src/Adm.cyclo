@@ -1,6 +1,0 @@
-BSW/ECUAL/ADM/Src/Adm.c:41:6:Adm_SensorGrp	9
-BSW/ECUAL/ADM/Src/Adm.c:106:6:Adm_PwSGrp	2
-BSW/ECUAL/ADM/Src/Adm.c:141:10:Adm_ReadAverage	2
-BSW/ECUAL/ADM/Src/Adm.c:210:6:Adm_Init	1
-BSW/ECUAL/ADM/Src/Adm.c:219:6:Adm_task_5ms	1
-BSW/ECUAL/ADM/Src/Adm.c:224:6:Adm_Deinit	1

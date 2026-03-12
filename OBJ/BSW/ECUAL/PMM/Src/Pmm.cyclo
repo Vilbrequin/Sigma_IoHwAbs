@@ -1,7 +1,0 @@
-BSW/ECUAL/PMM/Src/Pmm.c:16:6:Pmm_Init	1
-BSW/ECUAL/PMM/Src/Pmm.c:22:6:Pmm_SetOutputToIdleState	1
-BSW/ECUAL/PMM/Src/Pmm.c:28:6:Pmm_SetDutyCycle_HighBeam	2
-BSW/ECUAL/PMM/Src/Pmm.c:44:6:Pmm_SetDutyCycle_LowBeam	2
-BSW/ECUAL/PMM/Src/Pmm.c:60:6:Pmm_SetDutyCycle_Wipper	2
-BSW/ECUAL/PMM/Src/Pmm.c:82:6:Pmm_Task_10ms	1
-BSW/ECUAL/PMM/Src/Pmm.c:112:6:pmm_SetDuty	1

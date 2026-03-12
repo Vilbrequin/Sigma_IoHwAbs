@@ -1,9 +1,0 @@
-BSW/MCAL/DIO/Src/Dio.c:17:6:Dio_Init	2
-BSW/MCAL/DIO/Src/Dio.c:22:15:Dio_ReadChannel	2
-BSW/MCAL/DIO/Src/Dio.c:30:6:Dio_WriteChannel	2
-BSW/MCAL/DIO/Src/Dio.c:38:15:Dio_FlipChannel	3
-BSW/MCAL/DIO/Src/Dio.c:56:19:Dio_ReadPort	2
-BSW/MCAL/DIO/Src/Dio.c:64:6:Dio_WritePort	2
-BSW/MCAL/DIO/Src/Dio.c:78:19:Dio_ReadChannelGroup	3
-BSW/MCAL/DIO/Src/Dio.c:97:6:Dio_WriteChannelGroup	3
-BSW/MCAL/DIO/Src/Dio.c:116:6:Dio_MaskedWritePort	3

@@ -1,2 +1,0 @@
-PLATFORM/Sch/Src/user_timebase.c:13:10:User_GetMs	4	static
-PLATFORM/Sch/Src/user_timebase.c:19:6:User_Timebase_Inc1ms	4	static

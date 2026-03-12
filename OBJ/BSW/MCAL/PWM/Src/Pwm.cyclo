@@ -1,8 +1,0 @@
-BSW/MCAL/PWM/Src/Pwm.c:50:6:Pwm_Init	11
-BSW/MCAL/PWM/Src/Pwm.c:98:6:Pwm_SetDutyCycle	8
-BSW/MCAL/PWM/Src/Pwm.c:134:6:Pwm_SetPeriodAndDuty	14
-BSW/MCAL/PWM/Src/Pwm.c:170:6:Pwm_SetOutputToIdle	21
-BSW/MCAL/PWM/Src/Pwm.c:207:21:Pwm_GetOutputState	10
-BSW/MCAL/PWM/Src/Pwm.c:235:6:Pwm_EnableNotification	18
-BSW/MCAL/PWM/Src/Pwm.c:331:6:Pwm_DisableNotification	7
-BSW/MCAL/PWM/Src/Pwm.c:365:20:Pwm_TimerEnableClock	13
